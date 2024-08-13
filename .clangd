@@ -419,7 +419,7 @@ CompileFlags:
   - -I/sdk/tools/bin/compiler/riscv/cc_riscv32_musl_b010/cc_riscv32_musl_fp_win/sysroot/usr/include/netpacket
   - -I/sdk/tools/bin/compiler/riscv/cc_riscv32_musl_b010/cc_riscv32_musl_fp_win/sysroot/usr/include/scsi
   - -I/sdk/tools/bin/compiler/riscv/cc_riscv32_musl_b010/cc_riscv32_musl_fp_win/sysroot/usr/include/sys
-  CompilationDatabase: /sdk/output/ws63/acore/ws63-liteos-app/compile_commands.json
+  CompilationDatabase: /sdk/output/bs21/acore/standard-bs21-n1100/compile_commands.json
 Diagnostics:
   Suppress:
   - implicit-function-declaration

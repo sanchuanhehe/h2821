@@ -40,9 +40,6 @@ from distutils.spawn import find_executable
 # 获取当前路径
 current_dir = os.path.dirname(os.path.realpath(__file__))
 
-# 拼接当前路径和相对路径
-compilation_database_path = os.path.join(current_dir, 'output', 'ws63', 'acore', 'ws63-liteos-app', 'compile_commands.json')
-
 sys.dont_write_bytecode = True
 root_dir = os.path.split(os.path.realpath(__file__))[0]
 sys.path.append(os.path.join(root_dir, 'build', 'config'))
@@ -51,15 +48,38 @@ sys.path.append(os.path.join(root_dir, 'build', 'script'))
 from cmake_builder import CMakeBuilder
 from generate_clangd_config import generate_clangd_config
 
-def check_enviroment():
+def check_environment():
     if not find_executable("cmake"):
         print("cmake is not installed or not added to system path.")
     if not find_executable("ninja") and not find_executable("make"):
         print("make/ninja is not installed or not added to system path.")
 
+check_environment()
+
 builder = CMakeBuilder(sys.argv)
 
 builder.build()
+
+# 定义函数递归查找 compile_commands.json 文件，并返回时间戳最新的一个
+def find_compile_commands(root_dir):
+    compile_commands_paths = []
+    for dirpath, dirnames, filenames in os.walk(root_dir):
+        if 'compile_commands.json' in filenames:
+            compile_commands_paths.append(os.path.join(dirpath, 'compile_commands.json'))
+    
+    if not compile_commands_paths:
+        return None
+    
+    # 找到修改时间最新的文件
+    latest_compile_commands = max(compile_commands_paths, key=os.path.getmtime)
+    return latest_compile_commands
+
+# 查找 compile_commands.json 文件路径
+compilation_database_path = find_compile_commands(current_dir)
+
+if not compilation_database_path:
+    print("Error: compile_commands.json not found in any directory.")
+    sys.exit(1)
 
 # 调用函数生成 .clangd 文件
 generate_clangd_config(output_path='.clangd', compilation_database_path=compilation_database_path)
