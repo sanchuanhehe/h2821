@@ -2,7 +2,7 @@
 # encoding=utf-8
 # ============================================================================
 # @brief    build system entry, receive param & start to build
-# Copyright (c) CompanyNameMagicTag 2022-2022. All rights reserved.
+# Copyright (c) HiSilicon (Shanghai) Technologies Co., Ltd. 2022-2022. All rights reserved.
 # ============================================================================
 """
 接收参数列表及解释:
@@ -37,12 +37,19 @@ import os
 import sys
 from distutils.spawn import find_executable
 
+# 获取当前路径
+current_dir = os.path.dirname(os.path.realpath(__file__))
+
+# 拼接当前路径和相对路径
+compilation_database_path = os.path.join(current_dir, 'output', 'ws63', 'acore', 'ws63-liteos-app', 'compile_commands.json')
+
 sys.dont_write_bytecode = True
 root_dir = os.path.split(os.path.realpath(__file__))[0]
 sys.path.append(os.path.join(root_dir, 'build', 'config'))
 sys.path.append(os.path.join(root_dir, 'build', 'script'))
 
 from cmake_builder import CMakeBuilder
+from generate_clangd_config import generate_clangd_config
 
 def check_enviroment():
     if not find_executable("cmake"):
@@ -53,3 +60,6 @@ def check_enviroment():
 builder = CMakeBuilder(sys.argv)
 
 builder.build()
+
+# 调用函数生成 .clangd 文件
+generate_clangd_config(output_path='.clangd', compilation_database_path=compilation_database_path)
